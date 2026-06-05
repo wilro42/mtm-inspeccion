@@ -398,10 +398,11 @@ function buildForm(){
       fg("Turno",`<select id="turno" onchange="form.turno=this.value"><option${f.turno==="Día"?" selected":""}>Día</option><option${f.turno==="Noche"?" selected":""}>Noche</option></select>`)
     )}
     ${fg("Inspector",inp("inspector","Nombre del inspector","text",f.inspector))}
-    ${fg("Estado",`<div class="status-grid">
-      ${[["OK","var(--green)","#052e16"],["EN_PROCESO","var(--accent)","#2d1f02"],["RECHAZADO","var(--red)","#2d0707"],["PENDIENTE","var(--blue)","#071a2d"]].map(([k,c,bg])=>`
-        <button class="status-btn" onclick="form.estado='${k}';document.querySelectorAll('.status-btn').forEach(b=>b.style.cssText='');this.style.background='${c}';this.style.color='${k==='OK'||k==='EN_PROCESO'?'#000':'#fff'}';this.style.border='1px solid ${c}'"
-          style="border:1px solid ${c};background:${f.estado===k?c:bg};color:${f.estado===k?(k==='OK'||k==='EN_PROCESO'?'#000':'#fff'):c}">${ESTADO_LABEL[k]}</button>`).join("")}
+    ${fg("Estado",`<div class="status-grid" id="statusGrid">
+      <button class="status-btn" id="sb-OK" style="border:1px solid #22c55e;background:${f.estado==='OK'?'#22c55e':'#052e16'};color:${f.estado==='OK'?'#000':'#22c55e'}" onclick="setEstado('OK','#22c55e',this)">✓ OK</button>
+      <button class="status-btn" id="sb-EN_PROCESO" style="border:1px solid #f59e0b;background:${f.estado==='EN_PROCESO'?'#f59e0b':'#2d1f02'};color:${f.estado==='EN_PROCESO'?'#000':'#f59e0b'}" onclick="setEstado('EN_PROCESO','#f59e0b',this)">⚙ En Proceso</button>
+      <button class="status-btn" id="sb-RECHAZADO" style="border:1px solid #ef4444;background:${f.estado==='RECHAZADO'?'#ef4444':'#2d0707'};color:${f.estado==='RECHAZADO'?'#fff':'#ef4444'}" onclick="setEstado('RECHAZADO','#ef4444',this)">✕ Rechazado</button>
+      <button class="status-btn" id="sb-PENDIENTE" style="border:1px solid #3b82f6;background:${f.estado==='PENDIENTE'?'#3b82f6':'#071a2d'};color:${f.estado==='PENDIENTE'?'#fff':'#3b82f6'}" onclick="setEstado('PENDIENTE','#3b82f6',this)">⏳ Pendiente</button>
     </div>`)}
   `);
 
@@ -699,6 +700,20 @@ function closePhotoOverlay(){ document.getElementById("photoOverlay").classList.
 // ══════════════════════════════════════════════
 // SAVE RECORD
 // ══════════════════════════════════════════════
+function setEstado(key, color, btn){
+  form.estado = key;
+  const darkBgs = {OK:'#052e16',EN_PROCESO:'#2d1f02',RECHAZADO:'#2d0707',PENDIENTE:'#071a2d'};
+  const textDark = ['OK','EN_PROCESO'];
+  document.querySelectorAll('.status-btn').forEach(b=>{
+    const k = b.id.replace('sb-','');
+    const c = b.style.borderColor;
+    b.style.background = darkBgs[k]||'transparent';
+    b.style.color = b.style.borderColor;
+  });
+  btn.style.background = color;
+  btn.style.color = (key==='OK'||key==='EN_PROCESO') ? '#000' : '#fff';
+}
+
 function collectFormFromDOM(){
   // Read all text/number/date inputs and textareas by their id -> form key mapping
   const textKeys=["equipoId","calculo","fechaComp","inspector","proveedor","turno",
