@@ -737,16 +737,20 @@ function closePhotoOverlay(){ document.getElementById("photoOverlay").classList.
 // ══════════════════════════════════════════════
 function setEstado(key, color, btn){
   form.estado = key;
+  // Reset all status buttons
+  const allBtns = document.querySelectorAll('.status-btn');
   const darkBgs = {OK:'#052e16',EN_PROCESO:'#2d1f02',RECHAZADO:'#2d0707',PENDIENTE:'#071a2d'};
-  const textDark = ['OK','EN_PROCESO'];
-  document.querySelectorAll('.status-btn').forEach(b=>{
-    const k = b.id.replace('sb-','');
-    const c = b.style.borderColor;
-    b.style.background = darkBgs[k]||'transparent';
-    b.style.color = b.style.borderColor;
+  const colors = {OK:'#22c55e',EN_PROCESO:'#f59e0b',RECHAZADO:'#ef4444',PENDIENTE:'#3b82f6'};
+  allBtns.forEach(b=>{
+    const k = b.id ? b.id.replace('sb-','') : '';
+    b.style.background = darkBgs[k] || '#0d0f14';
+    b.style.color = colors[k] || '#8892a4';
+    b.style.border = '1px solid ' + (colors[k] || '#252c3f');
   });
+  // Highlight selected
   btn.style.background = color;
   btn.style.color = (key==='OK'||key==='EN_PROCESO') ? '#000' : '#fff';
+  btn.style.border = '1px solid ' + color;
 }
 
 function collectFormFromDOM(){
