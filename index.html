@@ -1,3 +1,34 @@
+No se seleccionó ningún elemento
+
+Ir al contenido
+Cómo usar Gmail con lectores de pantalla
+Conversaciones
+yo
+MTM Inspeccion
+ 
+Archivo adjunto:
+MTM Inspeccion.html
+yo
+MTM Inspeccion
+ 
+Archivo adjunto:
+MTM Inspeccion.html
+2:38 p.m.
+yo
+MTM Inspeccion
+ 
+Archivo adjunto:
+MTM Inspeccion.html
+2:12 p.m.
+AliExpress
+Mira si esto te gusta: Escáner OBD2 Multi-idioma V520, ...
+ - ¿Listos para salir a escape? ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌
+ 
+7:52 a.m.
+Se usó el 81% de 15 GB
+Condiciones · Privacidad · Políticas de programa
+Última actividad de la cuenta: hace 0 minutos
+Se está utilizando en 1 ubicación más · Detalles
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -600,7 +631,7 @@ function buildForm(){
     <button class="btn-add" onclick="addCapa()">+ Agregar Capa</button>
     <div class="capa-box">
       <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Espesor Total del Sistema</div>
-      ${r3(fg("Especificado (mils)",inp("espTotalEsp","Ej:10","number",f.espTotalEsp)),fg("Medido (mils)",inp("espTotalMed","Ej:11.2","number",f.espTotalMed)),fg("¿Conforme?",`<div style="display:flex;gap:5px">${["Sí","No"].map(v=>`<button onclick="form.espTotalConf='${v}';this.parentNode.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--muted)'});this.style.background='${v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'}';this.style.color='${v==='Sí'?'var(--green)':'var(--red)'}'" style="flex:1;padding:7px 0;border-radius:4px;border:1px solid ${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--border)'};background:${f.espTotalConf===v?(v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'):'transparent'};color:${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:700;font-size:12px;cursor:pointer">${v}</button>`).join("")}</div>`))}
+      ${r3(fg("Especificado (mils)",inp("espTotalEsp","Ej:10","number",f.espTotalEsp)),fg("Medido (mils)",inp("espTotalMed","Ej:11.2","number",f.espTotalMed)),fg("¿Conforme?",`<div style="display:flex;gap:5px"><button class="esp-conf-btn sb" data-k="espSi" style="flex:1;padding:7px 0;border-radius:4px;border:1px solid ${f.espTotalConf==='Sí'?'#22c55e':'var(--border)'};background:${f.espTotalConf==='Sí'?'rgba(34,197,94,.2)':'transparent'};color:${f.espTotalConf==='Sí'?'#22c55e':'var(--muted)'};font-weight:700;font-size:12px;cursor:pointer">Sí</button><button class="esp-conf-btn sb" data-k="espNo" style="flex:1;padding:7px 0;border-radius:4px;border:1px solid ${f.espTotalConf==='No'?'#ef4444':'var(--border)'};background:${f.espTotalConf==='No'?'rgba(239,68,68,.2)':'transparent'};color:${f.espTotalConf==='No'?'#ef4444':'var(--muted)'};font-weight:700;font-size:12px;cursor:pointer">No</button></div>`))}
       ${fg("Norma medición espesor",sel("normaEsp",NORMAS_ESP,f.normaEsp))}
     </div>
   `);
@@ -750,13 +781,28 @@ function setEstado(key, color, btn){
   btn.style.border = '1px solid ' + color;
 }
 
-// Event delegation for status buttons - handles dynamically created buttons
+// Event delegation for all dynamic buttons
 document.addEventListener('click', function(e){
   const btn = e.target.closest('.sb[data-k]');
   if(!btn) return;
   const k = btn.dataset.k;
+  // Status buttons
   const colors = {OK:'#22c55e',EN_PROCESO:'#f59e0b',RECHAZADO:'#ef4444',PENDIENTE:'#3b82f6'};
-  if(colors[k]) setEstado(k, colors[k], btn);
+  if(colors[k]){ setEstado(k, colors[k], btn); return; }
+  // Esp total conforme
+  if(k==='espSi'||k==='espNo'){
+    const val = k==='espSi'?'Sí':'No';
+    form.espTotalConf = val;
+    btn.parentNode.querySelectorAll('.esp-conf-btn').forEach(b=>{
+      b.style.background='transparent';
+      b.style.color='var(--muted)';
+      b.style.borderColor='var(--border)';
+    });
+    btn.style.background = val==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)';
+    btn.style.color = val==='Sí'?'#22c55e':'#ef4444';
+    btn.style.borderColor = val==='Sí'?'#22c55e':'#ef4444';
+    return;
+  }
 });
 
 function setCapaConf(idx, val, btn){
@@ -952,13 +998,20 @@ function openDetailByIndex(idx){
 }
 
 function openDetailByUid(uid){
-  openDetail(uid);
+  // Try numeric match first, then string match
+  detailRecord = records.find(r=>r.uid===uid || r.uid===Number(uid) || String(r.uid)===String(uid));
+  if(!detailRecord){ console.log("Record not found for uid:", uid); return; }
+  openDetailWithRecord(detailRecord);
 }
 
 function openDetail(uid){
-  detailRecord=records.find(r=>r.uid===uid);
-  if(!detailRecord) return;
-  const r=detailRecord;
+  detailRecord=records.find(r=>r.uid===uid || r.uid===Number(uid) || String(r.uid)===String(uid));
+  if(!detailRecord){ console.log("Record not found:", uid, "records:", records.length); return; }
+  openDetailWithRecord(detailRecord);
+}
+
+function openDetailWithRecord(r){
+  detailRecord=r;
   const today=new Date(); today.setHours(0,0,0,0);
   const vencido=r.fechaComp&&r.estado!=="OK"&&new Date(r.fechaComp)<today;
 
@@ -1093,3 +1146,5 @@ renderDash();
 </script>
 </body>
 </html>
+MTM Inspeccion.html
+Mostrando MTM Inspeccion.html 
