@@ -1,4 +1,4 @@
-No se seleccionó ningún elemento
+No se seleccionó ningún elemento 
 
 Ir al contenido
 Cómo usar Gmail con lectores de pantalla
@@ -8,6 +8,12 @@ MTM Inspeccion
  
 Archivo adjunto:
 MTM Inspeccion.html
+yo
+MTM Inspeccion
+ 
+Archivo adjunto:
+MTM Inspeccion.html
+2:51 p.m.
 yo
 MTM Inspeccion
  
@@ -173,6 +179,7 @@ textarea{resize:vertical;min-height:68px}
 .detail-lbl{color:var(--muted);min-width:130px;flex-shrink:0}
 .detail-val{color:var(--text)}
 .btn-del-rec{width:100%;padding:10px;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:4px;font-weight:700;font-size:12px;cursor:pointer}
+.btn-edit-rec{width:100%;padding:10px;background:var(--accent);border:none;color:#000;border-radius:4px;font-weight:700;font-size:12px;cursor:pointer;margin-bottom:10px}
 
 /* SAVED MSG */
 .saved-msg{background:#052e16;border:1px solid var(--green);color:var(--green);border-radius:6px;padding:9px 14px;font-size:13px;text-align:center;margin-bottom:12px;display:none}
@@ -984,6 +991,29 @@ function renderRecords(){
 // ══════════════════════════════════════════════
 // DETAIL
 // ══════════════════════════════════════════════
+function editRecord(uid){
+  const rec = records.find(r=>r.uid===uid || r.uid===Number(uid) || String(r.uid)===String(uid));
+  if(!rec) return;
+  // Load record into form
+  form = JSON.parse(JSON.stringify(rec));
+  // Remove from records temporarily - will be re-saved
+  if(rec._docId && window.deleteFromFirebase){
+    if(!confirm("Para editar se eliminará el registro actual y podrás guardarlo con los cambios. ¿Continuar?")) return;
+    window.deleteFromFirebase(rec._docId);
+  } else {
+    records = records.filter(r => String(r.uid) !== String(uid));
+    save();
+  }
+  closeDetail();
+  // Go to form tab
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById("sec-form").classList.add("active");
+  document.querySelectorAll(".tab")[1].classList.add("active");
+  buildForm();
+  document.getElementById("content").scrollTop = 0;
+}
+
 function openDetailByIndex(idx){
   const el = document.getElementById("searchInput");
   const search = el ? el.value : "";
@@ -1091,6 +1121,7 @@ function openDetailWithRecord(r){
     ):""}
     ${r.obs?ds("Observaciones","var(--accent)","📝",`<div style="font-size:13px">${esc(r.obs)}</div>`):""}
     ${allImgs.length>0?ds("Fotografías","var(--purple)","📷",photoHtml):""}
+    <button class="btn-edit-rec" onclick="editRecord(${r.uid})">✏ EDITAR REGISTRO</button>
     <button class="btn-del-rec" onclick="deleteRecord(${r.uid})">ELIMINAR REGISTRO</button>
     <div style="height:20px"></div>
   `;
@@ -1147,4 +1178,4 @@ renderDash();
 </body>
 </html>
 MTM Inspeccion.html
-Mostrando MTM Inspeccion.html 
+Mostrando MTM Inspeccion.html
