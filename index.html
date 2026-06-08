@@ -225,7 +225,7 @@ textarea{resize:vertical;min-height:68px}
         <div id="dash-venc-list"></div>
       </div>
       <div class="card">
-        <div class="sect-title" style="color:var(--accent)">⚠️ Alertas Activas</div>
+        <div class="sect-title" style="color:var(--accent)">⚠ Alertas Activas</div>
         <div id="dash-alerts"><div class="empty-state">✅ Sin alertas</div></div>
       </div>
       <div class="card">
@@ -367,26 +367,26 @@ function showTab(id){
 // ══════════════════════════════════════════════
 // HELPERS: HTML builders
 // ══════════════════════════════════════════════
-function fg(label, html){ return <div class="fgroup"><label>${label}</label>${html}</div>; }
-function r2(...items){ return <div class="r2 fgroup">${items.map(i=><div>${i}</div>).join("")}</div>; }
-function r3(...items){ return <div class="r3 fgroup">${items.map(i=><div>${i}</div>).join("")}</div>; }
+function fg(label, html){ return `<div class="fgroup"><label>${label}</label>${html}</div>`; }
+function r2(...items){ return `<div class="r2 fgroup">${items.map(i=>`<div>${i}</div>`).join("")}</div>`; }
+function r3(...items){ return `<div class="r3 fgroup">${items.map(i=>`<div>${i}</div>`).join("")}</div>`; }
 function inp(id,placeholder="",type="text",val=""){
-  return <input id="${id}" type="${type}" value="${esc(val)}" placeholder="${placeholder}" oninput="form['${id}']=this.value">;
+  return `<input id="${id}" type="${type}" value="${esc(val)}" placeholder="${placeholder}" oninput="form['${id}']=this.value">`;
 }
 function sel(id, options, val="", placeholder="-- Seleccionar --"){
-  return <select id="${id}" onchange="form['${id}']=this.value"><option value="">${placeholder}</option>${options.map(o=><option value="${o}"${val===o?" selected":""}>${o}</option>).join("")}</select>;
+  return `<select id="${id}" onchange="form['${id}']=this.value"><option value="">${placeholder}</option>${options.map(o=>`<option value="${o}"${val===o?" selected":""}>${o}</option>`).join("")}</select>`;
 }
 function txt(id,placeholder="",val="",rows=2){
-  return <textarea id="${id}" placeholder="${placeholder}" rows="${rows}" oninput="form['${id}']=this.value">${esc(val)}</textarea>;
+  return `<textarea id="${id}" placeholder="${placeholder}" rows="${rows}" oninput="form['${id}']=this.value">${esc(val)}</textarea>`;
 }
 function yn(key,val=""){
-  return <div class="yn">${["Sí","No","N/A"].map(v=><button onclick="setYN('${key}','${v}',this)" class="${val===v?'sel-yn':''}">${v}</button>).join("")}</div>;
+  return `<div class="yn">${["Sí","No","N/A"].map(v=>`<button onclick="setYN('${key}','${v}',this)" class="${val===v?'sel-yn':''}">${v}</button>`).join("")}</div>`;
 }
 function mc(key, options, vals=[], color=""){
-  return <div class="mc ${color}">${options.map(o=><button onclick="toggleMC('${key}','${o}',this)" class="${vals.includes(o)?'sel-mc':''}">${o}</button>).join("")}</div>;
+  return `<div class="mc ${color}">${options.map(o=>`<button onclick="toggleMC('${key}','${o}',this)" class="${vals.includes(o)?'sel-mc':''}">${o}</button>`).join("")}</div>`;
 }
 function sectCard(color,icon,title,content){
-  return <div class="card"><div class="sect-title" style="color:${color}">${icon} ${title}</div>${content}</div>;
+  return `<div class="card"><div class="sect-title" style="color:${color}">${icon} ${title}</div>${content}</div>`;
 }
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
@@ -418,33 +418,33 @@ function buildForm(){
   let html = "";
 
   // Identificación
-  html += sectCard("var(--accent)","🏷️","Identificación General",`
+  html += sectCard("var(--accent)","🏷","Identificación General",`
     ${r2(
-      fg("Tipo de Equipo",<select id="fTipo" onchange="form.tipo=this.value;form.subtipo='';buildForm()"><option value="">--</option><option${f.tipo==="Tanque"?" selected":""}>Tanque</option><option${f.tipo==="Prensa"?" selected":""}>Prensa</option><option${f.tipo==="Radiador"?" selected":""}>Radiador</option></select>),
-      fg("Proyecto / Subtipo",<select id="fSubtipo" onchange="form.subtipo=this.value" ${!f.tipo?"disabled":""}><option value="">--</option>${(SUBTYPES[f.tipo]||[]).map(s=><option${f.subtipo===s?" selected":""}>${s}</option>).join("")}</select>)
+      fg("Tipo de Equipo",`<select id="fTipo" onchange="form.tipo=this.value;form.subtipo='';buildForm()"><option value="">--</option><option${f.tipo==="Tanque"?" selected":""}>Tanque</option><option${f.tipo==="Prensa"?" selected":""}>Prensa</option><option${f.tipo==="Radiador"?" selected":""}>Radiador</option></select>`),
+      fg("Proyecto / Subtipo",`<select id="fSubtipo" onchange="form.subtipo=this.value" ${!f.tipo?"disabled":""}><option value="">--</option>${(SUBTYPES[f.tipo]||[]).map(s=>`<option${f.subtipo===s?" selected":""}>${s}</option>`).join("")}</select>`)
     )}
     ${r2(fg("N° / ID Equipo",inp("equipoId","Ej: 485187","text",f.equipoId)),fg("Cálculo / Orden",inp("calculo","Ej: 10316","text",f.calculo)))}
     ${r2(
-      fg("Etapa",<select id="etapa" onchange="form.etapa=this.value">${ETAPAS.map(e=><option${f.etapa===e?" selected":""}>${e}</option>).join("")}</select>),
+      fg("Etapa",`<select id="etapa" onchange="form.etapa=this.value">${ETAPAS.map(e=>`<option${f.etapa===e?" selected":""}>${e}</option>`).join("")}</select>`),
       fg("Fecha Compromiso",inp("fechaComp","","date",f.fechaComp))
     )}
     ${r2(
-      fg("Proveedor",<select id="proveedor" onchange="form.proveedor=this.value"><option value="">--</option>${["Local","Nacional","Internacional"].map(p=><option${f.proveedor===p?" selected":""}>${p}</option>).join("")}</select>),
-      fg("Turno",<select id="turno" onchange="form.turno=this.value"><option${f.turno==="Día"?" selected":""}>Día</option><option${f.turno==="Noche"?" selected":""}>Noche</option></select>)
+      fg("Proveedor",`<select id="proveedor" onchange="form.proveedor=this.value"><option value="">--</option>${["Local","Nacional","Internacional"].map(p=>`<option${f.proveedor===p?" selected":""}>${p}</option>`).join("")}</select>`),
+      fg("Turno",`<select id="turno" onchange="form.turno=this.value"><option${f.turno==="Día"?" selected":""}>Día</option><option${f.turno==="Noche"?" selected":""}>Noche</option></select>`)
     )}
     ${fg("Inspector",inp("inspector","Nombre del inspector","text",f.inspector))}
     ${fg("Estado",`<div class="status-grid" id="statusGrid">
-      <button class="status-btn" id="sb-OK" style="border:1px solid #22c55e;background:${f.estado==='OK'?'#22c55e':'#052e16'};color:${f.estado==='OK'?'#000':'#22c55e'}" onclick="setEstado('OK','#22c55e',this)">✓ OK</button>
-      <button class="status-btn" id="sb-EN_PROCESO" style="border:1px solid #f59e0b;background:${f.estado==='EN_PROCESO'?'#f59e0b':'#2d1f02'};color:${f.estado==='EN_PROCESO'?'#000':'#f59e0b'}" onclick="setEstado('EN_PROCESO','#f59e0b',this)">⚙️ En Proceso</button>
-      <button class="status-btn" id="sb-RECHAZADO" style="border:1px solid #ef4444;background:${f.estado==='RECHAZADO'?'#ef4444':'#2d0707'};color:${f.estado==='RECHAZADO'?'#fff':'#ef4444'}" onclick="setEstado('RECHAZADO','#ef4444',this)">✕ Rechazado</button>
-      <button class="status-btn" id="sb-PENDIENTE" style="border:1px solid #3b82f6;background:${f.estado==='PENDIENTE'?'#3b82f6':'#071a2d'};color:${f.estado==='PENDIENTE'?'#fff':'#3b82f6'}" onclick="setEstado('PENDIENTE','#3b82f6',this)">⏳ Pendiente</button>
+      <button class="status-btn sb" data-k="OK" style="border:1px solid #22c55e;background:${f.estado==='OK'?'#22c55e':'#052e16'};color:${f.estado==='OK'?'#000':'#22c55e'}">✓ OK</button>
+      <button class="status-btn sb" data-k="EN_PROCESO" style="border:1px solid #f59e0b;background:${f.estado==='EN_PROCESO'?'#f59e0b':'#2d1f02'};color:${f.estado==='EN_PROCESO'?'#000':'#f59e0b'}">⚙ En Proceso</button>
+      <button class="status-btn sb" data-k="RECHAZADO" style="border:1px solid #ef4444;background:${f.estado==='RECHAZADO'?'#ef4444':'#2d0707'};color:${f.estado==='RECHAZADO'?'#fff':'#ef4444'}">✕ Rechazado</button>
+      <button class="status-btn" id="sb-PENDIENTE" class="status-btn sb" data-k="PENDIENTE" style="border:1px solid #3b82f6;background:${f.estado==='PENDIENTE'?'#3b82f6':'#071a2d'};color:${f.estado==='PENDIENTE'?'#fff':'#3b82f6'}" >⏳ Pendiente</button>
     </div>`)}
   `);
 
   // Tanque sections
   if(f.tipo==="Tanque"){
     html += sectCard("var(--accent)","🧱","Paredes",
-      ["1","2","3","4"].map(n=>fg(Pared ${n},inp(pared${n},Estado pared ${n}...,"text",f[pared${n}]))).join("")
+      ["1","2","3","4"].map(n=>fg(`Pared ${n}`,inp(`pared${n}`,`Estado pared ${n}...`,"text",f[`pared${n}`]))).join("")
     );
     html += sectCard("var(--accent)","🔎","Zonas Inspeccionadas",`
       ${r2(fg("Interno",yn("interno",f.interno)),fg("Externo",yn("externo",f.externo)))}
@@ -471,7 +471,7 @@ function buildForm(){
   }
 
   // SOLDADURA
-  html += sectCard("var(--orange)","⚙️","Normas y Proceso de Soldadura",`
+  html += sectCard("var(--orange)","⚙","Normas y Proceso de Soldadura",`
     ${fg("Normas Aplicables de Soldadura",mc("normaSold",NORMAS_SOLD,f.normaSold,"orange"))}
     ${f.normaSold.includes("Otra")?fg("Otra norma",inp("otraNormaSold","Nombre norma...","text",f.otraNormaSold)):""}
     ${fg("Proceso(s) de Soldadura",mc("procSold",PROC_SOLD,f.procSold,"orange"))}
@@ -576,7 +576,7 @@ function buildForm(){
   `);
 
   // CONDICIONES
-  html += sectCard("var(--teal)","🌡️","Condiciones Ambientales",`
+  html += sectCard("var(--teal)","🌡","Condiciones Ambientales",`
     ${r2(fg("T° ambiente (°C)",inp("tempAmb","Ej: 22","number",f.tempAmb)),fg("Humedad relativa (%)",inp("humedad","Ej: 65","number",f.humedad)))}
     ${r2(fg("Punto de rocío (°C)",inp("puntoRocio","Ej: 12","number",f.puntoRocio)),fg("T° superficie (°C)",inp("tempSup","Ej: 25","number",f.tempSup)))}
   `);
@@ -586,21 +586,21 @@ function buildForm(){
     <div class="capa-box">
       <div class="capa-header">
         <input class="capa-name" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--accent);font-weight:700;font-size:13px;padding:7px 10px" value="${esc(c.nombre)}" oninput="form.capas[${i}].nombre=this.value" placeholder="Nombre capa ${i+1}">
-        ${f.capas.length>1?<button class="btn-del-sm" onclick="delCapa(${i})">✕</button>:""}
+        ${f.capas.length>1?`<button class="btn-del-sm" onclick="delCapa(${i})">✕</button>`:""}
       </div>
-      ${r2(fg("Tipo pintura",<select onchange="form.capas[${i}].tipo=this.value"><option value="">--</option>${TIPOS_PINT.map(t=><option${c.tipo===t?" selected":""}>${t}</option>).join("")}</select>),fg("Producto / Marca",<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.producto)}" placeholder="Nombre comercial" oninput="form.capas[${i}].producto=this.value">))  }
-      ${r2(fg("N° Lote",<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.lote)}" placeholder="Lote" oninput="form.capas[${i}].lote=this.value">),fg("Método aplicación",<select onchange="form.capas[${i}].metodo=this.value"><option value="">--</option>${METODOS_APL.map(m=><option${c.metodo===m?" selected":""}>${m}</option>).join("")}</select>))}
-      ${r3(fg("Esp. mín. seco (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMin)}" placeholder="Ej:3" oninput="form.capas[${i}].espMin=this.value">),fg("Esp. máx. seco (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMax)}" placeholder="Ej:5" oninput="form.capas[${i}].espMax=this.value">),fg("Esp. medido seco",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espSeco)}" placeholder="Ej:4.2" oninput="form.capas[${i}].espSeco=this.value">))}
-      ${r2(fg("Esp. húmedo (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espHum)}" placeholder="Ej:6.0" oninput="form.capas[${i}].espHum=this.value">),fg("Diluyente / %",<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.diluyente)}" placeholder="Tipo y %" oninput="form.capas[${i}].diluyente=this.value">))}
-      ${fg("¿Conforme?",<div class="yn" id="conf-capa-${i}"><button onclick="setCapaConf(${i},'Sí',this)" class="${c.conforme==='Sí'?'sel-yn':''}" style="${c.conforme==='Sí'?'border-color:var(--accent);background:var(--accent);color:#000':''}">Sí</button><button onclick="setCapaConf(${i},'No',this)" class="${c.conforme==='No'?'sel-yn':''}" style="${c.conforme==='No'?'border-color:var(--accent);background:var(--accent);color:#000':''}">No</button><button onclick="setCapaConf(${i},'N/A',this)" class="${c.conforme==='N/A'?'sel-yn':''}" style="${c.conforme==='N/A'?'border-color:var(--accent);background:var(--accent);color:#000':''}">N/A</button></div>)}
+      ${r2(fg("Tipo pintura",`<select onchange="form.capas[${i}].tipo=this.value"><option value="">--</option>${TIPOS_PINT.map(t=>`<option${c.tipo===t?" selected":""}>${t}</option>`).join("")}</select>`),fg("Producto / Marca",`<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.producto)}" placeholder="Nombre comercial" oninput="form.capas[${i}].producto=this.value">`))  }
+      ${r2(fg("N° Lote",`<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.lote)}" placeholder="Lote" oninput="form.capas[${i}].lote=this.value">`),fg("Método aplicación",`<select onchange="form.capas[${i}].metodo=this.value"><option value="">--</option>${METODOS_APL.map(m=>`<option${c.metodo===m?" selected":""}>${m}</option>`).join("")}</select>`))}
+      ${r3(fg("Esp. mín. seco (mils)",`<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMin)}" placeholder="Ej:3" oninput="form.capas[${i}].espMin=this.value">`),fg("Esp. máx. seco (mils)",`<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMax)}" placeholder="Ej:5" oninput="form.capas[${i}].espMax=this.value">`),fg("Esp. medido seco",`<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espSeco)}" placeholder="Ej:4.2" oninput="form.capas[${i}].espSeco=this.value">`))}
+      ${r2(fg("Esp. húmedo (mils)",`<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espHum)}" placeholder="Ej:6.0" oninput="form.capas[${i}].espHum=this.value">`),fg("Diluyente / %",`<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.diluyente)}" placeholder="Tipo y %" oninput="form.capas[${i}].diluyente=this.value">`))}
+      ${fg("¿Conforme?",`<div class="yn" id="conf-capa-${i}"><button onclick="setCapaConf(${i},'Sí',this)" class="${c.conforme==='Sí'?'sel-yn':''}" style="${c.conforme==='Sí'?'border-color:var(--accent);background:var(--accent);color:#000':''}">Sí</button><button onclick="setCapaConf(${i},'No',this)" class="${c.conforme==='No'?'sel-yn':''}" style="${c.conforme==='No'?'border-color:var(--accent);background:var(--accent);color:#000':''}">No</button><button onclick="setCapaConf(${i},'N/A',this)" class="${c.conforme==='N/A'?'sel-yn':''}" style="${c.conforme==='N/A'?'border-color:var(--accent);background:var(--accent);color:#000':''}">N/A</button></div>`)}
     </div>
   `).join("");
-  html += sectCard("var(--teal)","🖌️","Espesores por Capa",`
+  html += sectCard("var(--teal)","🖌","Espesores por Capa",`
     ${capasHtml}
     <button class="btn-add" onclick="addCapa()">+ Agregar Capa</button>
     <div class="capa-box">
       <div style="font-size:11px;color:var(--accent);font-weight:700;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">Espesor Total del Sistema</div>
-      ${r3(fg("Especificado (mils)",inp("espTotalEsp","Ej:10","number",f.espTotalEsp)),fg("Medido (mils)",inp("espTotalMed","Ej:11.2","number",f.espTotalMed)),fg("¿Conforme?",<div style="display:flex;gap:5px">${["Sí","No"].map(v=><button onclick="form.espTotalConf='${v}';this.parentNode.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--muted)'});this.style.background='${v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'}';this.style.color='${v==='Sí'?'var(--green)':'var(--red)'}'" style="flex:1;padding:7px 0;border-radius:4px;border:1px solid ${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--border)'};background:${f.espTotalConf===v?(v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'):'transparent'};color:${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:700;font-size:12px;cursor:pointer">${v}</button>).join("")}</div>))}
+      ${r3(fg("Especificado (mils)",inp("espTotalEsp","Ej:10","number",f.espTotalEsp)),fg("Medido (mils)",inp("espTotalMed","Ej:11.2","number",f.espTotalMed)),fg("¿Conforme?",`<div style="display:flex;gap:5px">${["Sí","No"].map(v=>`<button onclick="form.espTotalConf='${v}';this.parentNode.querySelectorAll('button').forEach(b=>{b.style.background='transparent';b.style.color='var(--muted)'});this.style.background='${v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'}';this.style.color='${v==='Sí'?'var(--green)':'var(--red)'}'" style="flex:1;padding:7px 0;border-radius:4px;border:1px solid ${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--border)'};background:${f.espTotalConf===v?(v==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)'):'transparent'};color:${f.espTotalConf===v?(v==='Sí'?'var(--green)':'var(--red)'):'var(--muted)'};font-weight:700;font-size:12px;cursor:pointer">${v}</button>`).join("")}</div>`))}
       ${fg("Norma medición espesor",sel("normaEsp",NORMAS_ESP,f.normaEsp))}
     </div>
   `);
@@ -627,7 +627,7 @@ function buildForm(){
 }
 
 function addCapa(){
-  form.capas.push({nombre:Capa ${form.capas.length+1},tipo:"",producto:"",lote:"",espMin:"",espMax:"",espSeco:"",espHum:"",metodo:"",diluyente:"",conforme:""});
+  form.capas.push({nombre:`Capa ${form.capas.length+1}`,tipo:"",producto:"",lote:"",espMin:"",espMax:"",espSeco:"",espHum:"",metodo:"",diluyente:"",conforme:""});
   buildForm();
 }
 function delCapa(i){ form.capas.splice(i,1); buildForm(); }
@@ -645,16 +645,16 @@ function buildPhotoSection(){
   ETAPAS_FOTO.forEach(e=>{ grouped[e]=imgs.filter(i=>i.etapa===e); });
 
   let galleryHtml = imgs.length===0
-    ? <div style="text-align:center;color:var(--muted);font-size:13px;padding:14px 0">Sin fotos agregadas</div>
+    ? `<div style="text-align:center;color:var(--muted);font-size:13px;padding:14px 0">Sin fotos agregadas</div>`
     : ETAPAS_FOTO.filter(e=>grouped[e].length>0).map(etapa=>`
         <div style="margin-bottom:12px">
           <div class="photo-stage-title">${etapa} <span class="stage-count">${grouped[etapa].length}</span></div>
           <div class="photo-grid">${grouped[etapa].map(img=>`
             <div class="photo-thumb" style="border:2px solid ${img.esRechazo?'var(--red)':'var(--border)'}">
               <img src="${img.dataUrl}" alt="" onclick="openPhotoOverlay('${img.id}')">
-              ${img.esRechazo?<div class="photo-rech">RECH</div>:""}
+              ${img.esRechazo?`<div class="photo-rech">RECH</div>`:""}
               <button class="photo-del" onclick="delPhoto('${img.id}')">✕</button>
-              ${img.descripcion?<div class="photo-desc">${esc(img.descripcion)}</div>:""}
+              ${img.descripcion?`<div class="photo-desc">${esc(img.descripcion)}</div>`:""}
             </div>
           `).join("")}</div>
         </div>
@@ -663,16 +663,16 @@ function buildPhotoSection(){
   return sectCard("var(--purple)","📷","Registro Fotográfico",`
     <div class="photo-upload">
       <div style="font-size:11px;color:var(--purple);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Agregar Fotos</div>
-      ${fg("Etapa / Proceso",<select onchange="photoEtapa=this.value"><option value="">-- Seleccionar --</option>${ETAPAS_FOTO.map(e=><option${photoEtapa===e?" selected":""}>${e}</option>).join("")}</select>)}
-      ${fg("Descripción (opcional)",<input id="photoDescInp" type="text" value="${esc(photoDesc)}" placeholder="Ej: Costura pared 2, inicio rechazo..." oninput="photoDesc=this.value">)}
+      ${fg("Etapa / Proceso",`<select onchange="photoEtapa=this.value"><option value="">-- Seleccionar --</option>${ETAPAS_FOTO.map(e=>`<option${photoEtapa===e?" selected":""}>${e}</option>`).join("")}</select>`)}
+      ${fg("Descripción (opcional)",`<input id="photoDescInp" type="text" value="${esc(photoDesc)}" placeholder="Ej: Costura pared 2, inicio rechazo..." oninput="photoDesc=this.value">`)}
       <div style="margin-bottom:10px">
         <button onclick="togglePhotoRech(this)" style="padding:5px 12px;border-radius:4px;border:1px solid ${photoRech?'var(--red)':'var(--border)'};background:${photoRech?'rgba(239,68,68,.15)':'transparent'};color:${photoRech?'var(--red)':'var(--muted)'};font-size:12px;font-weight:700;cursor:pointer">
-          ⚠️ Marcar como Rechazo
+          ⚠ Marcar como Rechazo
         </button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <button onclick="triggerPhotoCapture()" style="padding:10px;background:var(--purple);color:#fff;border:none;border-radius:4px;font-weight:700;font-size:12px;cursor:pointer">📷 Cámara</button>
-        <button onclick="triggerPhotoGallery()" style="padding:10px;background:transparent;border:1px solid var(--purple);color:var(--purple);border-radius:4px;font-weight:700;font-size:12px;cursor:pointer">🗂️ Galería</button>
+        <button onclick="triggerPhotoGallery()" style="padding:10px;background:transparent;border:1px solid var(--purple);color:var(--purple);border-radius:4px;font-weight:700;font-size:12px;cursor:pointer">🗂 Galería</button>
       </div>
       <input type="file" id="photoCam" accept="image/*" capture="environment" multiple style="display:none" onchange="handlePhotos(this)">
       <input type="file" id="photoGal" accept="image/*" multiple style="display:none" onchange="handlePhotos(this)">
@@ -727,7 +727,7 @@ function openPhotoOverlay(id){
   const img=form.imagenes.find(i=>String(i.id)===String(id));
   if(!img) return;
   document.getElementById("ovImg").src=img.dataUrl;
-  document.getElementById("ovInfo").innerHTML=<div style="font-weight:700;color:var(--accent)">${img.etapa}</div>${img.descripcion?<div>${esc(img.descripcion)}</div>:""}<div style="color:var(--muted);font-size:11px">${img.fecha}</div>${img.esRechazo?<div style="color:var(--red);font-weight:700">⚠️ RECHAZO</div>:""};
+  document.getElementById("ovInfo").innerHTML=`<div style="font-weight:700;color:var(--accent)">${img.etapa}</div>${img.descripcion?`<div>${esc(img.descripcion)}</div>`:""}<div style="color:var(--muted);font-size:11px">${img.fecha}</div>${img.esRechazo?`<div style="color:var(--red);font-weight:700">⚠ RECHAZO</div>`:""}`;
   document.getElementById("photoOverlay").classList.add("show");
 }
 function closePhotoOverlay(){ document.getElementById("photoOverlay").classList.remove("show"); }
@@ -737,21 +737,27 @@ function closePhotoOverlay(){ document.getElementById("photoOverlay").classList.
 // ══════════════════════════════════════════════
 function setEstado(key, color, btn){
   form.estado = key;
-  // Reset all status buttons
-  const allBtns = document.querySelectorAll('.status-btn');
   const darkBgs = {OK:'#052e16',EN_PROCESO:'#2d1f02',RECHAZADO:'#2d0707',PENDIENTE:'#071a2d'};
   const colors = {OK:'#22c55e',EN_PROCESO:'#f59e0b',RECHAZADO:'#ef4444',PENDIENTE:'#3b82f6'};
-  allBtns.forEach(b=>{
-    const k = b.id ? b.id.replace('sb-','') : '';
+  document.querySelectorAll('.status-btn').forEach(b=>{
+    const k = (b.id||'').replace('sb-','') || (b.dataset && b.dataset.k) || '';
     b.style.background = darkBgs[k] || '#0d0f14';
     b.style.color = colors[k] || '#8892a4';
     b.style.border = '1px solid ' + (colors[k] || '#252c3f');
   });
-  // Highlight selected
   btn.style.background = color;
   btn.style.color = (key==='OK'||key==='EN_PROCESO') ? '#000' : '#fff';
   btn.style.border = '1px solid ' + color;
 }
+
+// Event delegation for status buttons - handles dynamically created buttons
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.sb[data-k]');
+  if(!btn) return;
+  const k = btn.dataset.k;
+  const colors = {OK:'#22c55e',EN_PROCESO:'#f59e0b',RECHAZADO:'#ef4444',PENDIENTE:'#3b82f6'};
+  if(colors[k]) setEstado(k, colors[k], btn);
+});
 
 function setCapaConf(idx, val, btn){
   form.capas[idx].conforme = val;
@@ -874,14 +880,14 @@ function renderDash(){
 
   const alerts=records.filter(r=>r.estado==="RECHAZADO"||r.estado==="PENDIENTE");
   document.getElementById("dash-alerts").innerHTML=alerts.length===0
-    ?<div class="empty-state">✅ Sin alertas</div>
+    ?`<div class="empty-state">✅ Sin alertas</div>`
     :alerts.slice(0,6).map(r=>`
       <div class="alert-item" onclick="openDetail(${r.uid})">
         <div class="dot" style="background:${ESTADO_COLOR[r.estado]}"></div>
         <div style="font-size:13px">
           <strong>${r.tipo} ${r.equipoId}</strong> — ${r.etapa}
           <span class="badge" style="color:${ESTADO_COLOR[r.estado]};border-color:${ESTADO_COLOR[r.estado]};margin-left:4px">${ESTADO_LABEL[r.estado]}</span>
-          ${r.obs?<div style="font-size:11px;color:var(--muted)">${esc(r.obs.slice(0,60))}</div>:""}
+          ${r.obs?`<div style="font-size:11px;color:var(--muted)">${esc(r.obs.slice(0,60))}</div>`:""}
         </div>
       </div>`).join("");
 }
@@ -900,7 +906,7 @@ function renderRecords(){
   });
   document.getElementById("recCount").textContent=filtered.length;
   const el=document.getElementById("recList");
-  if(filtered.length===0){ el.innerHTML=<div class="empty-state">📋 Sin registros.<br>Usa "Registrar" para comenzar.</div>; return; }
+  if(filtered.length===0){ el.innerHTML=`<div class="empty-state">📋 Sin registros.<br>Usa "Registrar" para comenzar.</div>`; return; }
   el.innerHTML=filtered.map((r,idx)=>{
     const vencido=r.fechaComp&&r.estado!=="OK"&&new Date(r.fechaComp)<today;
     const fotos=(r.imagenes||[]);
@@ -914,16 +920,16 @@ function renderRecords(){
         </div>
         <span style="font-size:10px;color:var(--muted)">${r.fecha}</span>
       </div>
-      <div class="rec-meta">${esc(r.subtipo||"")}${r.calculo?` · Cal: ${esc(r.calculo)}:""} · ${r.etapa}${r.proveedor? · ${esc(r.proveedor)}`:""}</div>
+      <div class="rec-meta">${esc(r.subtipo||"")}${r.calculo?` · Cal: ${esc(r.calculo)}`:""} · ${r.etapa}${r.proveedor?` · ${esc(r.proveedor)}`:""}</div>
       <div class="rec-tags">
-        ${(r.normaSold||[]).length>0?<span class="rec-tag" style="color:var(--orange)">⚙️ ${(r.normaSold||[]).slice(0,2).join(", ")}</span>:""}
-        ${r.aplicaTintas==="Sí"?<span class="rec-tag" style="color:var(--purple)">🔴 PT: ${r.resultPT||"—"}</span>:""}
-        ${r.aplicaPrueba==="Sí"?<span class="rec-tag" style="color:var(--blue)">🔵 ${r.resultPrueba?.includes("Aprobado")?"✓ Prueba pres.":"✗ Prueba pres."}</span>:""}
-        ${r.espTotalMed?<span class="rec-tag" style="color:var(--teal)">🖌️ ${r.espTotalMed} mils</span>:""}
-        ${fotos.length>0?<span class="rec-tag" style="color:var(--purple)">📷 ${fotos.length} foto${fotos.length!==1?"s":""}${rechFotos.length>0? · ⚠️${rechFotos.length}:""}</span>:""}
+        ${(r.normaSold||[]).length>0?`<span class="rec-tag" style="color:var(--orange)">⚙ ${(r.normaSold||[]).slice(0,2).join(", ")}</span>`:""}
+        ${r.aplicaTintas==="Sí"?`<span class="rec-tag" style="color:var(--purple)">🔴 PT: ${r.resultPT||"—"}</span>`:""}
+        ${r.aplicaPrueba==="Sí"?`<span class="rec-tag" style="color:var(--blue)">🔵 ${r.resultPrueba?.includes("Aprobado")?"✓ Prueba pres.":"✗ Prueba pres."}</span>`:""}
+        ${r.espTotalMed?`<span class="rec-tag" style="color:var(--teal)">🖌 ${r.espTotalMed} mils</span>`:""}
+        ${fotos.length>0?`<span class="rec-tag" style="color:var(--purple)">📷 ${fotos.length} foto${fotos.length!==1?"s":""}${rechFotos.length>0?` · ⚠${rechFotos.length}`:""}</span>`:""}
       </div>
-      ${r.obs?<div class="rec-obs">${esc((r.obs||"").slice(0,70))}${(r.obs||"").length>70?"...":""}</div>:""}
-      ${r.fechaComp?<div style="font-size:11px;margin-top:3px" class="${vencido?'venc':'ok-date'}">📅 ${r.fechaComp}${vencido?" ⚠️ VENCIDO":""}</div>:""}
+      ${r.obs?`<div class="rec-obs">${esc((r.obs||"").slice(0,70))}${(r.obs||"").length>70?"...":""}</div>`:""}
+      ${r.fechaComp?`<div style="font-size:11px;margin-top:3px" class="${vencido?'venc':'ok-date'}">📅 ${r.fechaComp}${vencido?" ⚠ VENCIDO":""}</div>`:""}
       <div class="rec-hint">Toca para ver detalle →</div>
     </div>`;
   }).join("");
@@ -958,7 +964,7 @@ function openDetail(uid){
 
   const dr=(label,value)=>{
     const v=Array.isArray(value)?value.join(", "):value;
-    return v?<div class="detail-row"><span class="detail-lbl">${label}:</span><span class="detail-val">${esc(String(v))}</span></div>:"";
+    return v?`<div class="detail-row"><span class="detail-lbl">${label}:</span><span class="detail-val">${esc(String(v))}</span></div>`:"";
   };
   const ds=(title,color,icon,content)=>`<div class="detail-sect">
     <div class="detail-sect-title" style="color:${color}">${icon} ${title}</div>
@@ -974,14 +980,14 @@ function openDetail(uid){
   if(allImgs.length>0){
     if(rejImgs.length>0){
       photoHtml+=`<div style="background:rgba(239,68,68,.08);border:1px solid var(--red);border-radius:6px;padding:8px;margin-bottom:10px">
-        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:6px">⚠️ RECHAZOS (${rejImgs.length})</div>
-        <div class="photo-grid">${rejImgs.map(img=><div class="photo-thumb" style="border:2px solid var(--red)"><img src="${img.dataUrl}" alt="" onclick="showDetailPhoto('${img.id}')"></div>).join("")}</div>
+        <div style="font-size:11px;color:var(--red);font-weight:700;margin-bottom:6px">⚠ RECHAZOS (${rejImgs.length})</div>
+        <div class="photo-grid">${rejImgs.map(img=>`<div class="photo-thumb" style="border:2px solid var(--red)"><img src="${img.dataUrl}" alt="" onclick="showDetailPhoto('${img.id}')"></div>`).join("")}</div>
       </div>`;
     }
     ETAPAS_FOTO.filter(e=>grouped[e]?.length>0).forEach(etapa=>{
       photoHtml+=`<div style="margin-bottom:10px">
         <div class="photo-stage-title">${etapa} <span class="stage-count">${grouped[etapa].length}</span></div>
-        <div class="photo-grid">${grouped[etapa].map(img=><div class="photo-thumb"><img src="${img.dataUrl}" alt="" onclick="showDetailPhoto('${img.id}')"></div>).join("")}</div>
+        <div class="photo-grid">${grouped[etapa].map(img=>`<div class="photo-thumb"><img src="${img.dataUrl}" alt="" onclick="showDetailPhoto('${img.id}')"></div>`).join("")}</div>
       </div>`;
     });
   }
@@ -991,17 +997,17 @@ function openDetail(uid){
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <div class="detail-title">${r.tipo} — ${esc(r.equipoId)}</div>
-          <div class="detail-sub">${r.fecha}${r.inspector?` · ${esc(r.inspector)}:""}${r.turno? · Turno ${r.turno}`:""}</div>
+          <div class="detail-sub">${r.fecha}${r.inspector?` · ${esc(r.inspector)}`:""}${r.turno?` · Turno ${r.turno}`:""}</div>
         </div>
         <span class="badge" style="color:${ESTADO_COLOR[r.estado]};border-color:${ESTADO_COLOR[r.estado]}">${ESTADO_LABEL[r.estado]}</span>
       </div>
     </div>
-    ${ds("Identificación","var(--accent)","🏷️",
+    ${ds("Identificación","var(--accent)","🏷",
       dr("Subtipo",r.subtipo)+dr("Cálculo",r.calculo)+dr("Etapa",r.etapa)+
-      dr("Fecha Compromiso",r.fechaComp?${r.fechaComp}${vencido?" ⚠️ VENCIDO":""}:"")+(r.fechaComp&&vencido?<div style="color:var(--red);font-size:12px;font-weight:700;margin-bottom:4px">⚠️ Fecha vencida</div>:"")+
+      dr("Fecha Compromiso",r.fechaComp?`${r.fechaComp}${vencido?" ⚠ VENCIDO":""}`:"")+(r.fechaComp&&vencido?`<div style="color:var(--red);font-size:12px;font-weight:700;margin-bottom:4px">⚠ Fecha vencida</div>`:"")+
       dr("Proveedor",r.proveedor)
     )}
-    ${(r.normaSold||[]).length>0?ds("Soldadura","var(--orange)","⚙️",
+    ${(r.normaSold||[]).length>0?ds("Soldadura","var(--orange)","⚙",
       dr("Normas",r.normaSold)+dr("Procesos",r.procSold)+dr("WPS",r.wps)+dr("PQR",r.pqr)+
       dr("Soldador ID",r.soldId)+dr("Certificación",r.soldCert)+dr("Posición",r.posSold)+
       dr("Material base",r.matBase)+dr("Material aporte",r.matAporte)+
@@ -1030,10 +1036,60 @@ function openDetail(uid){
       dr("Limpieza",r.tipoLimp)+dr("Grado",r.gradoLimp)+dr("Perfil anclaje",r.perfilAnclaje)+
       dr("Esp. total medido",r.espTotalMed?r.espTotalMed+" mils":"")+dr("Conforme",r.espTotalConf)
     ):""}
-    ${r.obs?ds("Observaciones","var(--accent)","📝",<div style="font-size:13px">${esc(r.obs)}</div>):""}
+    ${r.obs?ds("Observaciones","var(--accent)","📝",`<div style="font-size:13px">${esc(r.obs)}</div>`):""}
     ${allImgs.length>0?ds("Fotografías","var(--purple)","📷",photoHtml):""}
     <button class="btn-del-rec" onclick="deleteRecord(${r.uid})">ELIMINAR REGISTRO</button>
     <div style="height:20px"></div>
   `;
 
-  document.getElementById("detail").classList.add("show")
+  document.getElementById("detail").classList.add("show");
+  document.getElementById("detail").scrollTop=0;
+}
+
+function showDetailPhoto(id){
+  const img=detailRecord&&(detailRecord.imagenes||[]).find(i=>String(i.id)===String(id));
+  if(!img) return;
+  document.getElementById("ovImg").src=img.dataUrl;
+  document.getElementById("ovInfo").innerHTML=`<div style="font-weight:700;color:var(--accent)">${img.etapa}</div>${img.descripcion?`<div>${esc(img.descripcion)}</div>`:""}<div style="color:var(--muted);font-size:11px">${img.fecha||""}</div>${img.esRechazo?`<div style="color:var(--red);font-weight:700">⚠ RECHAZO</div>`:""}`;
+  document.getElementById("photoOverlay").classList.add("show");
+}
+
+function closeDetail(){
+  document.getElementById("detail").classList.remove("show");
+  detailRecord=null;
+}
+
+function deleteRecord(uid){
+  if(!confirm("¿Eliminar este registro?")) return;
+  const rec = records.find(r=>r.uid===uid);
+  if(rec && rec._docId && window.deleteFromFirebase) {
+    window.deleteFromFirebase(rec._docId);
+  } else {
+    records=records.filter(r=>r.uid!==uid);
+    save();
+  }
+  closeDetail();
+  renderDash();
+  renderRecords();
+}
+
+// ══════════════════════════════════════════════
+function updateVencBadge(){
+  const today=new Date(); today.setHours(0,0,0,0);
+  const venc=records.filter(r=>r.fechaComp&&r.estado!=="OK"&&new Date(r.fechaComp)<today);
+  const badge=document.getElementById("vencBadge");
+  if(badge){ badge.textContent=venc.length; badge.style.display=venc.length>0?"":"none"; }
+}
+// SERVICE WORKER
+// ══════════════════════════════════════════════
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error",e));
+  });
+}
+
+// INIT
+renderDash();
+</script>
+</body>
+</html>
