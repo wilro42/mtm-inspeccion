@@ -592,7 +592,7 @@ function buildForm(){
       ${r2(fg("N° Lote",<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.lote)}" placeholder="Lote" oninput="form.capas[${i}].lote=this.value">),fg("Método aplicación",<select onchange="form.capas[${i}].metodo=this.value"><option value="">--</option>${METODOS_APL.map(m=><option${c.metodo===m?" selected":""}>${m}</option>).join("")}</select>))}
       ${r3(fg("Esp. mín. seco (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMin)}" placeholder="Ej:3" oninput="form.capas[${i}].espMin=this.value">),fg("Esp. máx. seco (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espMax)}" placeholder="Ej:5" oninput="form.capas[${i}].espMax=this.value">),fg("Esp. medido seco",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espSeco)}" placeholder="Ej:4.2" oninput="form.capas[${i}].espSeco=this.value">))}
       ${r2(fg("Esp. húmedo (mils)",<input type="number" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.espHum)}" placeholder="Ej:6.0" oninput="form.capas[${i}].espHum=this.value">),fg("Diluyente / %",<input style="background:var(--bg);border:1px solid var(--border);border-radius:4px;color:var(--text);font-size:13px;padding:7px 10px;width:100%" value="${esc(c.diluyente)}" placeholder="Tipo y %" oninput="form.capas[${i}].diluyente=this.value">))}
-      ${fg("¿Conforme?",<div class="yn">${["Sí","No","N/A"].map(v=><button onclick="form.capas[${i}].conforme='${v}';this.closest('.yn').querySelectorAll('button').forEach(b=>b.classList.remove('sel-yn'));this.classList.add('sel-yn')" class="${c.conforme===v?'sel-yn':''}">${v}</button>).join("")}</div>)}
+      ${fg("¿Conforme?",<div class="yn" id="conf-capa-${i}"><button onclick="setCapaConf(${i},'Sí',this)" class="${c.conforme==='Sí'?'sel-yn':''}" style="${c.conforme==='Sí'?'border-color:var(--accent);background:var(--accent);color:#000':''}">Sí</button><button onclick="setCapaConf(${i},'No',this)" class="${c.conforme==='No'?'sel-yn':''}" style="${c.conforme==='No'?'border-color:var(--accent);background:var(--accent);color:#000':''}">No</button><button onclick="setCapaConf(${i},'N/A',this)" class="${c.conforme==='N/A'?'sel-yn':''}" style="${c.conforme==='N/A'?'border-color:var(--accent);background:var(--accent);color:#000':''}">N/A</button></div>)}
     </div>
   `).join("");
   html += sectCard("var(--teal)","🖌️","Espesores por Capa",`
@@ -753,6 +753,30 @@ function setEstado(key, color, btn){
   btn.style.border = '1px solid ' + color;
 }
 
+function setCapaConf(idx, val, btn){
+  form.capas[idx].conforme = val;
+  const container = btn.closest('.yn');
+  if(container) container.querySelectorAll('button').forEach(b=>{
+    b.classList.remove('sel-yn');
+    b.style.background=''; b.style.color=''; b.style.borderColor='';
+  });
+  btn.classList.add('sel-yn');
+  btn.style.background='var(--accent)'; btn.style.color='#000'; btn.style.borderColor='var(--accent)';
+}
+
+function setEspConf(val, btn){
+  form.espTotalConf = val;
+  const container = btn.parentNode;
+  container.querySelectorAll('button').forEach(b=>{
+    b.style.background='transparent';
+    b.style.color='var(--muted)';
+    b.style.borderColor='var(--border)';
+  });
+  btn.style.background = val==='Sí'?'rgba(34,197,94,.2)':'rgba(239,68,68,.2)';
+  btn.style.color = val==='Sí'?'#22c55e':'#ef4444';
+  btn.style.borderColor = val==='Sí'?'#22c55e':'#ef4444';
+}
+
 function collectFormFromDOM(){
   // Read all text/number/date inputs and textareas by their id -> form key mapping
   const textKeys=["equipoId","calculo","fechaComp","inspector","proveedor","turno",
@@ -839,7 +863,7 @@ function renderDash(){
   if(venc.length>0){
     vencBox.style.display="";
     document.getElementById("dash-venc-list").innerHTML=venc.slice(0,5).map(r=>`
-      <div class="alert-item" onclick="openDetail(${r.uid})">
+      <div class="alert-item" onclick="openDetailByUid(${r.uid})">
         <div class="dot" style="background:var(--red)"></div>
         <div><strong>${r.tipo} ${r.equipoId}</strong> — ${r.etapa}<div style="font-size:11px;color:var(--muted)">Compromiso: ${r.fechaComp}</div></div>
       </div>`).join("");
@@ -877,11 +901,11 @@ function renderRecords(){
   document.getElementById("recCount").textContent=filtered.length;
   const el=document.getElementById("recList");
   if(filtered.length===0){ el.innerHTML=<div class="empty-state">📋 Sin registros.<br>Usa "Registrar" para comenzar.</div>; return; }
-  el.innerHTML=filtered.map(r=>{
+  el.innerHTML=filtered.map((r,idx)=>{
     const vencido=r.fechaComp&&r.estado!=="OK"&&new Date(r.fechaComp)<today;
     const fotos=(r.imagenes||[]);
     const rechFotos=fotos.filter(i=>i.esRechazo);
-    return `<div class="rec-card" onclick="openDetail(${r.uid})">
+    return `<div class="rec-card" onclick="openDetailByIndex(${idx})">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
           <span class="badge" style="color:var(--muted);border-color:var(--muted)">${r.tipo}</span>
@@ -908,6 +932,23 @@ function renderRecords(){
 // ══════════════════════════════════════════════
 // DETAIL
 // ══════════════════════════════════════════════
+function openDetailByIndex(idx){
+  const el = document.getElementById("searchInput");
+  const search = el ? el.value : "";
+  const fTipo = (document.getElementById("fTipo")||{}).value||"";
+  const fEst = (document.getElementById("fEstado")||{}).value||"";
+  const filtered = records.filter(r=>{
+    const txt=(r.equipoId+r.calculo+r.subtipo+(r.obs||"")+(r.inspector||"")+(r.proveedor||"")).toLowerCase();
+    return(!search||txt.includes(search.toLowerCase()))&&(!fTipo||r.tipo===fTipo)&&(!fEst||r.estado===fEst);
+  });
+  const rec = filtered[idx];
+  if(rec) openDetail(rec.uid);
+}
+
+function openDetailByUid(uid){
+  openDetail(uid);
+}
+
 function openDetail(uid){
   detailRecord=records.find(r=>r.uid===uid);
   if(!detailRecord) return;
@@ -995,54 +1036,4 @@ function openDetail(uid){
     <div style="height:20px"></div>
   `;
 
-  document.getElementById("detail").classList.add("show");
-  document.getElementById("detail").scrollTop=0;
-}
-
-function showDetailPhoto(id){
-  const img=detailRecord&&(detailRecord.imagenes||[]).find(i=>String(i.id)===String(id));
-  if(!img) return;
-  document.getElementById("ovImg").src=img.dataUrl;
-  document.getElementById("ovInfo").innerHTML=<div style="font-weight:700;color:var(--accent)">${img.etapa}</div>${img.descripcion?<div>${esc(img.descripcion)}</div>:""}<div style="color:var(--muted);font-size:11px">${img.fecha||""}</div>${img.esRechazo?<div style="color:var(--red);font-weight:700">⚠️ RECHAZO</div>:""};
-  document.getElementById("photoOverlay").classList.add("show");
-}
-
-function closeDetail(){
-  document.getElementById("detail").classList.remove("show");
-  detailRecord=null;
-}
-
-function deleteRecord(uid){
-  if(!confirm("¿Eliminar este registro?")) return;
-  const rec = records.find(r=>r.uid===uid);
-  if(rec && rec._docId && window.deleteFromFirebase) {
-    window.deleteFromFirebase(rec._docId);
-  } else {
-    records=records.filter(r=>r.uid!==uid);
-    save();
-  }
-  closeDetail();
-  renderDash();
-  renderRecords();
-}
-
-// ══════════════════════════════════════════════
-function updateVencBadge(){
-  const today=new Date(); today.setHours(0,0,0,0);
-  const venc=records.filter(r=>r.fechaComp&&r.estado!=="OK"&&new Date(r.fechaComp)<today);
-  const badge=document.getElementById("vencBadge");
-  if(badge){ badge.textContent=venc.length; badge.style.display=venc.length>0?"":"none"; }
-}
-// SERVICE WORKER
-// ══════════════════════════════════════════════
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("./sw.js").then(()=>console.log("SW registered")).catch(e=>console.log("SW error",e));
-  });
-}
-
-// INIT
-renderDash();
-</script>
-</body>
-</html>
+  document.getElementById("detail").classList.add("show")
